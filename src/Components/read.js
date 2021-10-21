@@ -1,34 +1,27 @@
 import React, { Component } from 'react';
 import { Movies } from './movies';
+import axios from 'axios';//Import Axios to Utilise JSON Promises
 
 export class Read extends React.Component {
 
-    state = {
-        movies:
-            [
-                {
-                    "Title": "Avengers: Infinity War",
-                    "Year": "2018",
-                    "imdbID": "tt4154756",
-                    "Type": "movie",
-                    "Poster": "https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg"
-                },
-                {
-                    "Title": "Captain America: Civil War",
-                    "Year": "2016",
-                    "imdbID": "tt3498820",
-                    "Type": "movie",
-                    "Poster": "https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg"
-                },
-                {
-                    "Title": "Charlie Wilson's War",
-                    "Year": "2007",
-                    "imdbID": "tt0472062",
-                    "Type": "movie",
-                    "Poster": "https://m.media-amazon.com/images/M/MV5BMTgwMDgwMDc4MF5BMl5BanBnXkFtZTYwOTU3MDM4._V1_SX300.jpg"
-                }
-            ]
+    state = {//A Variable to store JSON Data 
+        movies: []
     };
+
+    componentDidMount() {//A Method that will invoke immediately after this component gets mounted
+        axios.get("https://jsonblob.com/api/jsonblob/894944504570986496")
+            .then(//returns this method if promise is fulfilled
+                (response) => {
+                    //update teh state variable with the promised JSON BLOB
+                    this.setState({ movies: response.data.movies })
+                }
+            )
+            .catch(//returns this method if promise is not fulfilled
+                (error) => {
+                    console.log(error)//log the promise error to the console
+                }
+            );
+    }
 
     render() {/*Component Render MethSod To display Read*/
         return (
