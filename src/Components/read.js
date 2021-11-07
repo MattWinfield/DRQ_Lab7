@@ -9,7 +9,7 @@ export class Read extends React.Component {
     };
 
     componentDidMount() {//A Method that will invoke immediately after this component gets mounted
-        axios.get("https://jsonblob.com/api/jsonblob/894944504570986496")
+        axios.get("http://localhost:4000/api/movies")
             .then(//returns this method if promise is fulfilled
                 (response) => {
                     //update teh state variable with the promised JSON BLOB
