@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 
 export class Create extends React.Component {
 
@@ -21,9 +22,22 @@ export class Create extends React.Component {
 
     onSubmit(e) {//Method to call when form is submitted
         e.preventDefault();//Only call when content of form is not default
-        console.log("Movie: " + this.state.Title
+        alert("Movie: " + this.state.Title
             + " Year: " + this.state.Year
             + " Poster: " + this.state.Poster);
+
+        const newMovie = {//Create a new Movie Object with the submitted data
+            title: this.state.Title,
+            year: this.state.Year,
+            poster: this.state.Poster
+        }
+        axios.post('http://localhost:4000/api/movies', newMovie)//Post request that will return a Promise
+            .then((res) => {
+                console.log(res)//If promise fulfilled, log it to console
+            })
+            .catch((err) => {
+                console.log(err)//Otherwise log the error
+            });
     }
 
 

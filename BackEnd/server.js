@@ -1,17 +1,24 @@
 const express = require('express') //Creates a variable to Include Express with the node REQUIRE Function
 const cors = require('cors') //Creates a variable to Include CORS with the node REQUIRE Function
 const app = express() //Create an Express application and store as a Varaible
+const bodyParser = require('body-parser') //Creates a variable to Include Body-Parser with the node REQUIRE Function
 const port = 4000 //Define a Port variable
 
-app.use(cors());
+app.use(cors());//Specify the Server app to use CORS
 
-app.use(function (req, res, next) {
+app.use(function (req, res, next) {//Add CORS Access Control specs to header of HTTP responses
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
     res.header("Access-Control-Allow-Headers",
         "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.get('/', (req, res) => {//Create a Node response to a HTTP Get request at the root Address of localHost, responding with a message
     res.send('Hello World')
@@ -50,7 +57,17 @@ app.get('/api/movies', (req, res) => {//Create another Node response to a HTTP G
             }
         ]
 
-    res.json({ movies: myMovies })//Respond with Json Data
+    res.json({
+        message: "Data Sent OK",//Respond With a Message
+        movies: myMovies//and Respond with Json Data
+    })
+})
+
+app.post('/api/movies', (req, res) => {
+    console.log("Movie Received!");
+    console.log(req.body.title);
+    console.log(req.body.year);
+    console.log(req.body.poster);
 })
 
 app.listen(port, () => {//Create a Node HTTP Server and Specify the Port to listen with the 'port' Variable
