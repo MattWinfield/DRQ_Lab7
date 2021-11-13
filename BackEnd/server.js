@@ -1,6 +1,7 @@
 const express = require('express') //Creates a variable to Include Express with the node REQUIRE Function
 const cors = require('cors') //Creates a variable to Include CORS with the node REQUIRE Function
 const app = express() //Create an Express application and store as a Varaible
+const mongoose = require('mongoose') //Creates a variable to Include Mongoose with the node REQUIRE Function
 const bodyParser = require('body-parser') //Creates a variable to Include Body-Parser with the node REQUIRE Function
 const port = 4000 //Define a Port variable
 
@@ -14,6 +15,18 @@ app.use(function (req, res, next) {//Add CORS Access Control specs to header of 
     next();
 });
 
+const connectionString = "mongodb+srv://matt:matt@mwinfield.iyix2.mongodb.net/movies?retryWrites=true&w=majority"//Store the MongoDB Connection URL
+mongoose.connect(connectionString, { useNewUrlParser: true });//Use mongoose to connect to our MongoDB Database
+
+const Schema = mongoose.Schema;//Create a Mongoose Schema to store to the DB
+var movieSchema = new Schema({//Map the Schema with the movie variables
+    title: String,
+    year: String,
+    poster: String
+});
+
+var MovieModel = mongoose.model("movie", movieSchema)//Create a Data Model using the Schema Interface to store as an object
+
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
 
@@ -25,49 +38,35 @@ app.get('/', (req, res) => {//Create a Node response to a HTTP Get request at th
 })
 
 app.get('/api/movies', (req, res) => {//Create another Node response to a HTTP Get request at the /api/movies Address of localHost, responding with JSON Data
-    const myMovies =//Create a variabe to store the Json Data
-        [
-            {
-                "Title": "Avengers: Infinity War",
-                "Year": "2018",
-                "imdbID": "tt4154756",
-                "Type": "movie",
-                "Poster": "https://m.media-amazon.com/images/M/MV5BMjMxNjY2MDU1OV5BMl5BanBnXkFtZTgwNzY1MTUwNTM@._V1_SX300.jpg"
-            },
-            {
-                "Title": "Captain America: Civil War",
-                "Year": "2016",
-                "imdbID": "tt3498820",
-                "Type": "movie",
-                "Poster": "https://m.media-amazon.com/images/M/MV5BMjQ0MTgyNjAxMV5BMl5BanBnXkFtZTgwNjUzMDkyODE@._V1_SX300.jpg"
-            },
-            {
-                "Title": "World War Z",
-                "Year": "2013",
-                "imdbID": "tt0816711",
-                "Type": "movie",
-                "Poster": "https://m.media-amazon.com/images/M/MV5BNDQ4YzFmNzktMmM5ZC00MDZjLTk1OTktNDE2ODE4YjM2MjJjXkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg"
-            }
-            , {
-                "Title": "War of the Worlds",
-                "Year": "2005",
-                "imdbID": "tt0407304",
-                "Type": "movie",
-                "Poster": "https://m.media-amazon.com/images/M/MV5BNDUyODAzNDI1Nl5BMl5BanBnXkFtZTcwMDA2NDAzMw@@._V1_SX300.jpg"
-            }
-        ]
-
-    res.json({
-        message: "Data Sent OK",//Respond With a Message
-        movies: myMovies//and Respond with Json Data
+    MovieModel.find((err, data) => {//Use Mongoose Find method to retrieve data from Data Model
+        res.json(data);//Return Data model from DB as JSON
     })
 })
+
+
+app.get('/api/movies/:id', (req, res) => {//Create another Node response to a HTTP Get request at the /api/movies/:id Address of localHost
+    console.log(req.params.id);//Log the ID from the Address Bar
+
+    MovieModel.findById(req.params.id, (err, data) => {//Use the Mongoose FindbyID Method and a callback function to return any document with that ID
+        res.json(data)
+    });
+})
+
+
 
 app.post('/api/movies', (req, res) => {
     console.log("Movie Received!");
     console.log(req.body.title);
     console.log(req.body.year);
     console.log(req.body.poster);
+
+    MovieModel.create({//Use Mongoose Create Function to create document with the post data
+        title: req.body.title,
+        year: req.body.year,
+        poster: req.body.poster
+    });
+
+    res.send('Item Added');
 })
 
 app.listen(port, () => {//Create a Node HTTP Server and Specify the Port to listen with the 'port' Variable

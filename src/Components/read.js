@@ -12,8 +12,8 @@ export class Read extends React.Component {
         axios.get("http://localhost:4000/api/movies")
             .then(//returns this method if promise is fulfilled
                 (response) => {
-                    //update teh state variable with the promised JSON BLOB
-                    this.setState({ movies: response.data.movies })
+                    //update the state variable with the promised JSON BLOB
+                    this.setState({ movies: response.data })
                 }
             )
             .catch(//returns this method if promise is not fulfilled
